@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
 using TwelveDataSharp.Library.ResponseModels;
@@ -11,7 +12,7 @@ namespace TwelveDataSharp.UnitTests
     public class GetBollingerBandsAsync_Tests
     {
         [Fact]
-        public async void GetBollingerBandsAsync_Success_Test()
+        public async Task GetBollingerBandsAsync_Success_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -45,7 +46,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetBollingerBandsAsync_BadApiKey_Test()
+        public async Task GetBollingerBandsAsync_BadApiKey_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -64,7 +65,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetBollingerBandsAsync_InvalidSymbol_Test()
+        public async Task GetBollingerBandsAsync_InvalidSymbol_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -83,7 +84,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetBollingerBandsAsync_NullHttpClient_Test()
+        public async Task GetBollingerBandsAsync_NullHttpClient_Test()
         {
             // Arrange
             TwelveDataClient twelveDataClient = new TwelveDataClient("TEST", null);

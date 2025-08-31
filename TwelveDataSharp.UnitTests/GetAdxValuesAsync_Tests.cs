@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
 using TwelveDataSharp.Library.ResponseModels;
@@ -11,7 +10,7 @@ namespace TwelveDataSharp.UnitTests
     public class GetAdxValuesAsync_Tests
     {
         [Fact]
-        public async void GetAdxValuesAsync_Success_Test()
+        public async Task GetAdxValuesAsync_Success_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -40,7 +39,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetAdxValuesAsync_BadApiKey_Test()
+        public async Task GetAdxValuesAsync_BadApiKey_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -59,7 +58,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetAdxValuesAsync_InvalidSymbol_Test()
+        public async Task GetAdxValuesAsync_InvalidSymbol_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -78,7 +77,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetAdxValuesAsync_NullHttpClient_Test()
+        public async Task GetAdxValuesAsync_NullHttpClient_Test()
         {
             // Arrange
             TwelveDataClient twelveDataClient = new TwelveDataClient("TEST", null);

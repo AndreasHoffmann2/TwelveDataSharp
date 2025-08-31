@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
 using TwelveDataSharp.Library.ResponseModels;
@@ -11,7 +12,7 @@ namespace TwelveDataSharp.UnitTests
     public class GetQuoteAsync_Tests
     {
         [Fact]
-        public async void GetQuote_Success_Test()
+        public async Task GetQuote_Success_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -54,7 +55,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetQuote_InvalidSymbol_Test()
+        public async Task GetQuote_InvalidSymbol_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -73,7 +74,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetQuote_BadApiKey_Test()
+        public async Task GetQuote_BadApiKey_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -92,7 +93,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetQuote_NullHttpClient_Test()
+        public async Task GetQuote_NullHttpClient_Test()
         {
             // Arrange
             TwelveDataClient twelveDataClient = new TwelveDataClient("TEST", null);

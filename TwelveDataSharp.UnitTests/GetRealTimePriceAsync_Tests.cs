@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using RichardSzalay.MockHttp;
@@ -10,7 +11,7 @@ namespace TwelveDataSharp.UnitTests
     public class GetRealTimePriceAsync_Tests
     {
         [Fact]
-        public async void GetRealTimePrice_Success_Test()
+        public async Task GetRealTimePrice_Success_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -30,7 +31,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetRealTimePrice_BadApiKey_Test()
+        public async Task GetRealTimePrice_BadApiKey_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -49,7 +50,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetRealTimePrice_InvalidSymbol_Test()
+        public async Task GetRealTimePrice_InvalidSymbol_Test()
         {
             // Arrange
             var mockHttp = new MockHttpMessageHandler();
@@ -68,7 +69,7 @@ namespace TwelveDataSharp.UnitTests
         }
 
         [Fact]
-        public async void GetRealTimePrice_NullHttpClient_Test()
+        public async Task GetRealTimePrice_NullHttpClient_Test()
         {
             // Arrange
             TwelveDataClient twelveDataClient = new TwelveDataClient("TEST", null);
