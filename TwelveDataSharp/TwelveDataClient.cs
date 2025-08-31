@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Security.Authentication;
+using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Newtonsoft.Json;
 using TwelveDataSharp.Api.ResponseModels;
 using TwelveDataSharp.Interfaces;
@@ -123,26 +128,51 @@ namespace TwelveDataSharp
          * interval - supports intervals "1min", "5min", "15min", "30min", "45min", "1h", "2h", "4h", "1day", "1week", and "1month"
          * with a default value set to "1min"
          */
-        public async Task<TwelveDataTimeSeries> GetTimeSeriesAsync(string symbol, string interval = "1min")
+        public async Task<TwelveDataTimeSeries> GetTimeSeriesAsync(string symbol, 
+            string interval = "1min",             
+            string exchange = null,
+            string micCode = null,
+            string country = null,
+            string type = null,
+            int outputsize = 30,
+            DateTime? startDate = null,
+            DateTime? endDate = null
+        )
         {
+            List<Tuple<string, string>> queryStringValues = new List<Tuple<string, string>>() {
+                Tuple.Create("apikey", _apiKey),
+                Tuple.Create("symbol", symbol),
+                Tuple.Create("interval", interval),
+                Tuple.Create("exchange", exchange),
+                Tuple.Create("mic_code", micCode),
+                Tuple.Create("country", country),
+                Tuple.Create("type", type),
+                Tuple.Create("outputsize", outputsize+""),
+                Tuple.Create("start_date", startDate == null ? null : $"{startDate:yyyy-MM-dd}"),
+                Tuple.Create("end_date", endDate == null ? null : $"{endDate:yyyy-MM-dd}"),
+            };
+            var query = queryStringValues.Where(v => v.Item2 != null)
+                .Aggregate<Tuple<string, string>, string>(null, (a, b) => ((a == null ? "" : (a + "&")) + HttpUtility.UrlEncode(b.Item1) + "=" + HttpUtility.UrlEncode(b.Item2)));
+
+            string endpoint = "https://api.twelvedata.com/time_series?" + query;
             try
             {
-                string endpoint = "https://api.twelvedata.com/time_series?symbol=" + symbol + "&interval=" + interval +
-                                  "&apikey=" + _apiKey;
                 var response = await _client.GetAsync(endpoint);
                 string responseString = await response.Content.ReadAsStringAsync();
-                var jsonResponse = JsonConvert.DeserializeObject<TimeSeriesStocks>(responseString);
+                var jsonResponse = JsonConvert.DeserializeObject<TimeSeriesStocks>(responseString,new JsonSerializerSettings() {
+                    Culture = CultureInfo.InvariantCulture,
+                });
                 List<TimeSeriesValues> values = new List<TimeSeriesValues>();
                 var tsStockValues = jsonResponse?.Values;
                 if (tsStockValues != null)
                 {
                     values.AddRange(tsStockValues.Select(v => new TimeSeriesValues()
                     {
-                        Datetime = v?.Datetime ?? DateTime.MinValue,
-                        Open = Convert.ToDouble(v?.Open),
-                        High = Convert.ToDouble(v?.High),
-                        Low = Convert.ToDouble(v?.Low),
-                        Close = Convert.ToDouble(v?.Close),
+                        Datetime = v.Datetime,
+                        Open = Double.Parse(v.Open, CultureInfo.InvariantCulture),
+                        High = Double.Parse(v.High, CultureInfo.InvariantCulture),
+                        Low = Double.Parse(v.Low, CultureInfo.InvariantCulture),
+                        Close = Double.Parse(v.Close, CultureInfo.InvariantCulture),
                         Volume = v.Volume
                     }));
                 }
@@ -181,14 +211,19 @@ namespace TwelveDataSharp
          * interval - supports intervals "1min", "5min", "15min", "30min", "45min", "1h", "2h", "4h", "1day", "1week", and "1month"
          * with a default value set to "1min"
          */
-        public async Task<TwelveDataTimeSeriesAverage> GetTimeSeriesAverageAsync(string symbol,
-            string interval = "1min")
+        public async Task<TwelveDataTimeSeriesAverage> GetTimeSeriesAverageAsync(string symbol, string interval = "1min")
         {
             try
             {
-                var client = new HttpClient();
-                string endpoint = "https://api.twelvedata.com/avg?symbol=" + symbol + "&interval=" + interval +
-                                  "&apikey=" + _apiKey;
+                List<Tuple<string, string>> queryStringValues = new List<Tuple<string, string>>() {
+                    Tuple.Create("symbol", symbol),
+                    Tuple.Create("apiKey", _apiKey),
+                    Tuple.Create("interval", interval),
+                };
+                var query = queryStringValues.Where(v => v.Item2 != null)
+                    .Aggregate<Tuple<string, string>, string>(null, (a, b) => (a == null ? "" : (a + "&") + HttpUtility.UrlEncode(b.Item1) + "=" + HttpUtility.UrlEncode(b.Item2)));
+
+                string endpoint = "https://api.twelvedata.com/avg?" + query;
                 var response = await _client.GetAsync(endpoint);
                 string responseString = await response.Content.ReadAsStringAsync();
                 var jsonResponse = JsonConvert.DeserializeObject<TechnicalIndicatorAvg>(responseString);
